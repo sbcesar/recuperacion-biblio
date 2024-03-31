@@ -9,7 +9,7 @@ package org.example
  */
 class RegistroPrestamo(
     private val info: IGestorEntradaSalida
-) {
+) : IgestorPrestamos {
     private val registroPrestamoActual = mutableMapOf<Usuario,Libro>()              //Mapa mutable con el usuario y el libro tomado prestado
     private val historialPrestamo = mutableMapOf<Usuario,MutableList<String>>()     //Mapa mutable con el usuario y una lista de cadenas con lo que ha realizado(tomar prestado/devolver)
 
@@ -19,8 +19,8 @@ class RegistroPrestamo(
      * @param usuario El usuario al que se le presta el libro.
      * @param libro El libro que se presta al usuario.
      */
-    fun registrarPrestamo(usuario: Usuario,libro: Libro) {
-        if (libro.obtenerEstado() == EstadoLibro.PRESTADO) {
+    override fun registrarPrestamo(usuario: Usuario,libro: Libro) {
+        if (libro.obtenerEstado() == Estado.PRESTADO) {
             info.mostrarMensaje("El libro ya ha sido prestado.")
         } else {
             registroPrestamoActual[usuario] = libro
@@ -40,7 +40,7 @@ class RegistroPrestamo(
      * @param usuario El usuario que devuelve el libro.
      * @param libro El libro que se devuelve.
      */
-    fun registrarDevolucion(usuario: Usuario,libro: Libro) {
+    override fun registrarDevolucion(usuario: Usuario,libro: Libro) {
         if (!registroPrestamoActual.containsKey(usuario)) {
             info.mostrarMensaje("El usuario ${usuario.obtenerNombre()} no ha tomado prestado ningun libro o no existe.")
         } else {
@@ -50,7 +50,7 @@ class RegistroPrestamo(
                 info.mostrarMensaje("El usuario ${usuario.obtenerNombre()} no ha tomado prestado ningun libro.")
             } else {
                 registroPrestamoActual.remove(usuario,libro)
-                libro.establecerEstado(EstadoLibro.DISPONIBLE)
+                libro.establecerEstado(Estado.DISPONIBLE)
                 info.mostrarMensaje("El libro ${libro.obtenerTitulo()} ha sido devuelto.")
             }
         }
@@ -62,7 +62,7 @@ class RegistroPrestamo(
      * @param libro El libro del que se quiere consultar el historial de préstamos.
      * @return Lista de usuarios que han tomado prestado el libro.
      */
-    fun consultarHistorialLibro(libro: Libro): List<Usuario> {
+    override fun consultarHistorialLibro(libro: Libro): List<Usuario> {
         val usuariosConPrestamos = mutableListOf<Usuario>()
         registroPrestamoActual.forEach { (usuario, prestamo) ->
             if (prestamo == libro) {
@@ -78,7 +78,7 @@ class RegistroPrestamo(
      * @param usuario El usuario del que se quiere consultar el historial de préstamos.
      * @return Lista de cadenas que describen las acciones realizadas por el usuario (tomar prestado/devolver libros).
      */
-    fun consultarHistorialUsuario(usuario: Usuario): List<String> {
+    override fun consultarHistorialUsuario(usuario: Usuario): List<String> {
         return historialPrestamo[usuario] ?: emptyList()
     }
 }

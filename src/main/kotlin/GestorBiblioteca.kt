@@ -7,7 +7,8 @@ package org.example
  * @property info Interfaz que proporciona métodos para entrada y salida de información.
  */
 class GestorBiblioteca(
-    private val info: IGestorEntradaSalida
+    private val info: IGestorEntradaSalida,
+    private val gestorPrestamos: IgestorPrestamos
 ) {
     private val catalogo = Catalogo()
     private val registroPrestamo = RegistroPrestamo(GestorConsola())
@@ -48,13 +49,8 @@ class GestorBiblioteca(
      *
      * @param libro El libro que se desea prestar.
      */
-    fun tomarPrestado(libro: Libro) {
-        if (libro.obtenerEstado() == EstadoLibro.PRESTADO) {
-            info.mostrarMensaje("El libro ${libro.obtenerTitulo()} ya ha sido prestado.")
-        } else {
-            libro.establecerEstado(EstadoLibro.PRESTADO)
-            info.mostrarMensaje("Has tomado prestado el libro ${libro.obtenerTitulo()}")
-        }
+    fun tomarPrestado(usuario: Usuario,libro: Libro) {
+        gestorPrestamos.registrarPrestamo(usuario, libro)
     }
 
     /**
@@ -62,13 +58,8 @@ class GestorBiblioteca(
      *
      * @param libro El libro que se desea devolver.
      */
-    fun devolverLibro(libro: Libro) {
-        if (libro.obtenerEstado() == EstadoLibro.DISPONIBLE) {
-            info.mostrarMensaje("El libro ${libro.obtenerTitulo()} ya ha sido devuelto.")
-        } else {
-            libro.establecerEstado(EstadoLibro.DISPONIBLE)
-            info.mostrarMensaje("El libro ${libro.obtenerTitulo()} ha sido devuelto correctamente.")
-        }
+    fun devolverLibro(usuario: Usuario,libro: Libro) {
+        gestorPrestamos.registrarDevolucion(usuario,libro)
     }
 
     /**
@@ -92,11 +83,11 @@ class GestorBiblioteca(
      * @param estado El estado por el cual filtrar los libros (null para obtener todos los libros).
      * @return Lista de libros filtrados por el estado especificado.
      */
-    fun obtenerLibrosPorEstado(estado: EstadoLibro?): List<Libro> {
+    fun obtenerLibrosPorEstado(estado: Estado?): List<Libro> {
         return when (estado) {
             null -> catalogo.librosDisponibles      //Si es null se ven todos los libros
-            EstadoLibro.DISPONIBLE -> catalogo.librosDisponibles.filter { it.obtenerEstado() == EstadoLibro.DISPONIBLE }
-            EstadoLibro.PRESTADO -> catalogo.librosDisponibles.filter { it.obtenerEstado() == EstadoLibro.PRESTADO }
+            Estado.DISPONIBLE -> catalogo.librosDisponibles.filter { it.obtenerEstado() == Estado.DISPONIBLE }
+            Estado.PRESTADO -> catalogo.librosDisponibles.filter { it.obtenerEstado() == Estado.PRESTADO }
         }
     }
 }

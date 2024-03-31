@@ -13,13 +13,13 @@ import java.util.UUID
  * @property estado Estado actual del libro (por defecto DISPONIBLE).
  */
 data class Libro(
-    private val id: UUID,
-    private val titulo: String,
+    override val id: UUID,
+    override val titulo: String,
     private val autor: String,
     private val anioPublicacion: Int,
     private val tematica: String,
-    private var estado: EstadoLibro = EstadoLibro.DISPONIBLE
-) {
+    override var estado: Estado = Estado.DISPONIBLE
+): ElementoBiblioteca(id, titulo, estado),Prestable {
 
     /**
      * Inicializa la instancia de Libro y realiza validaciones sobre los datos proporcionados.
@@ -39,6 +39,25 @@ data class Libro(
      */
     private fun requireNoVacio(valor: String, mensajeError: String) {
         require(valor.isNotBlank()) { mensajeError }
+    }
+
+    override fun prestar() {
+        if (estado == Estado.DISPONIBLE) {
+            establecerEstado(Estado.PRESTADO)
+            GestorConsola().mostrarMensaje("El libro '$titulo' ha sido prestado.")
+
+        } else {
+            GestorConsola().mostrarMensaje("El libro '$titulo' no está disponible para ser prestado.")
+        }
+    }
+
+    override fun devolver() {
+        if (estado == Estado.PRESTADO) {
+            establecerEstado(Estado.DISPONIBLE)
+            GestorConsola().mostrarMensaje("El libro '$titulo' ha sido devuelto.")
+        } else {
+            GestorConsola().mostrarMensaje("El libro '$titulo' no se puede devolver porque no está prestado.")
+        }
     }
 
     /**
@@ -79,14 +98,14 @@ data class Libro(
     /**
      * Devuelve el estado actual del libro.
      */
-    fun obtenerEstado(): EstadoLibro {
+    fun obtenerEstado(): Estado {
         return estado
     }
 
     /**
      * Modifica el estado actual del libro.
      */
-    fun establecerEstado(nuevoEstado: EstadoLibro) {
+    fun establecerEstado(nuevoEstado: Estado) {
         estado = nuevoEstado
     }
 

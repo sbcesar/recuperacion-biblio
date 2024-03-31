@@ -3,13 +3,13 @@ package org.example
 fun main() {
     //INSTANCIAS
     val gestorConsola = GestorConsola()
-    val gestorBiblioteca = GestorBiblioteca(gestorConsola)
     val registroPrestamo = RegistroPrestamo(gestorConsola)
+    val gestorBiblioteca = GestorBiblioteca(gestorConsola,registroPrestamo)
 
     //CREAR LIBROS
     val libro1 = Libro(UtilidadesBiblioteca.generarIdentificadorUnico(),"El señor de los anillos","J.R.R.Tolkien",1954,"Aventura")
-    val libro2 = Libro(UtilidadesBiblioteca.generarIdentificadorUnico(),"One piece","Eiichiro Oda",1997,"Aventura",EstadoLibro.PRESTADO)
-    val libro3 = Libro(UtilidadesBiblioteca.generarIdentificadorUnico(),"Solo Leveling","Chu-Gong",2024,"Aventura",EstadoLibro.PRESTADO)
+    val libro2 = Libro(UtilidadesBiblioteca.generarIdentificadorUnico(),"One piece","Eiichiro Oda",1997,"Aventura",Estado.PRESTADO)
+    val libro3 = Libro(UtilidadesBiblioteca.generarIdentificadorUnico(),"Solo Leveling","Chu-Gong",2024,"Aventura",Estado.PRESTADO)
 
     //CREAR USUARIOS
     val usuario1 = Usuario(UtilidadesUsuario.generarIdentificadorUnico(),"Cesar")
@@ -25,22 +25,31 @@ fun main() {
     gestorBiblioteca.eliminarLibro(libro3)
 
     //TOMAR PRESTADO (1 correcta 2 erronea)
-    gestorBiblioteca.tomarPrestado(libro1)
-    gestorBiblioteca.tomarPrestado(libro2)
+    gestorBiblioteca.tomarPrestado(usuario1,libro1)
+    gestorBiblioteca.tomarPrestado(usuario2,libro2)
+
 
     //DEVOLVER (1 correcta 2 erronea)
-    gestorBiblioteca.devolverLibro(libro2)
-    gestorBiblioteca.devolverLibro(libro1)
+    gestorBiblioteca.devolverLibro(usuario2,libro2)
+    gestorBiblioteca.devolverLibro(usuario1,libro1)
+
+    //------------------
+    libro1.prestar()
+    libro2.prestar()
+
+    libro2.devolver()
+    libro1.devolver()
+    //------------------
 
     //MOSTRAR LIBROS DISPONIBLES
     gestorConsola.mostrarMensaje("\nLibros Disponibles:")
-    gestorBiblioteca.obtenerLibrosPorEstado(EstadoLibro.DISPONIBLE).forEach { libro ->
+    gestorBiblioteca.obtenerLibrosPorEstado(Estado.DISPONIBLE).forEach { libro ->
         gestorConsola.mostrarMensaje("- ${libro.obtenerTitulo()}")
     }
 
     //MOSTRAR LIBROS PRESTADOS
     gestorConsola.mostrarMensaje("\nLibros Prestados:")
-    gestorBiblioteca.obtenerLibrosPorEstado(EstadoLibro.PRESTADO).forEach { libro ->
+    gestorBiblioteca.obtenerLibrosPorEstado(Estado.PRESTADO).forEach { libro ->
         gestorConsola.mostrarMensaje("- ${libro.obtenerTitulo()}")
     }
 

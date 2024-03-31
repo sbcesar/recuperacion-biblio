@@ -1,6 +1,6 @@
 package org.example
 
-enum class EstadoLibro(val descripcion: String) {
+enum class Estado(val descripcion: String) {
     DISPONIBLE("Disponible"),
     PRESTADO("Prestado")
 }
