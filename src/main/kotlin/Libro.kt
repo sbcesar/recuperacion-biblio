@@ -13,12 +13,12 @@ import java.util.UUID
  * @property estado Estado actual del libro (por defecto DISPONIBLE).
  */
 data class Libro(
-    val id: UUID,
-    val titulo: String,
-    val autor: String,
-    val anioPublicacion: Int,
-    val tematica: String,
-    var estado: EstadoLibro = EstadoLibro.DISPONIBLE
+    private val id: UUID,
+    private val titulo: String,
+    private val autor: String,
+    private val anioPublicacion: Int,
+    private val tematica: String,
+    private var estado: EstadoLibro = EstadoLibro.DISPONIBLE
 ) {
 
     /**
@@ -39,6 +39,55 @@ data class Libro(
      */
     private fun requireNoVacio(valor: String, mensajeError: String) {
         require(valor.isNotBlank()) { mensajeError }
+    }
+
+    /**
+     * Devuelve el ID del libro.
+     */
+    fun obtenerId(): UUID {
+        return id
+    }
+
+    /**
+     * Devuelve el título del libro.
+     */
+    fun obtenerTitulo(): String {
+        return titulo
+    }
+
+    /**
+     * Devuelve el autor del libro.
+     */
+    fun obtenerAutor(): String {
+        return autor
+    }
+
+    /**
+     * Devuelve el año de publicación del libro.
+     */
+    fun obtenerAnioPublicacion(): Int {
+        return anioPublicacion
+    }
+
+    /**
+     * Devuelve la temática del libro.
+     */
+    fun obtenerTematica(): String {
+        return tematica
+    }
+
+    /**
+     * Devuelve el estado actual del libro.
+     */
+    fun obtenerEstado(): EstadoLibro {
+        return estado
+    }
+
+    /**
+     * Modifica el estado actual del libro.
+     */
+    fun establecerEstado(nuevoEstado: EstadoLibro) {
+        estado = nuevoEstado
     }
 
     /**
